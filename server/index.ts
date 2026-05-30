@@ -8,6 +8,7 @@ type Bindings = {
   GOOGLE_CLIENT_ID: string
   GOOGLE_CLIENT_SECRET: string
   FRONTEND_URL: string
+  ADMIN_EMAILS: string
 }
 
 type Variables = {
@@ -180,6 +181,12 @@ app.post('/api/auth/google', async (c) => {
     
     if (!payload.email) {
       return c.json({ error: 'Email not found in token' }, 400)
+    }
+
+    // Authorization: Check if email is in allowed ADMIN_EMAILS list
+    const allowedEmails = (c.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
+    if (!allowedEmails.includes(payload.email.toLowerCase())) {
+      return c.json({ error: 'Email Anda tidak memiliki akses Administrator.' }, 403)
     }
 
     let user = await c.env.DB.prepare('SELECT * FROM users WHERE email = ?').bind(payload.email).first()
