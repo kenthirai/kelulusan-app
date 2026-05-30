@@ -100,5 +100,45 @@ export const api = {
     })
     if (!res.ok) throw new Error('Gagal menghapus semua data')
     return res.json()
+  },
+
+  getUsers: async (token: string): Promise<any> => {
+    const res = await fetch(`${API_BASE}/admin/users`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    if (!res.ok) throw new Error('Gagal mengambil data admin')
+    return res.json()
+  },
+
+  createUser: async (token: string, data: any): Promise<any> => {
+    const res = await fetch(`${API_BASE}/admin/users`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}` 
+      },
+      body: JSON.stringify(data)
+    })
+    return res.json()
+  },
+
+  updateUser: async (token: string, id: string, data: any): Promise<any> => {
+    const res = await fetch(`${API_BASE}/admin/users/${id}`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}` 
+      },
+      body: JSON.stringify(data)
+    })
+    return res.json()
+  },
+
+  deleteUser: async (token: string, id: string): Promise<any> => {
+    const res = await fetch(`${API_BASE}/admin/users/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    return res.json()
   }
 }

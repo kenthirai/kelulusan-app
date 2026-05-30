@@ -6,23 +6,27 @@ import { api } from '../lib/api';
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [candidates, setCandidates] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ total: 0, lulus: 0, cumlaude: 0, persentase: 0 });
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   
   // Form states
   const [formData, setFormData] = useState({ id: '', nomor_ujian: '', nama: '', kategori: '', status: 'LULUS', nilai: '' });
+  const [userFormData, setUserFormData] = useState({ id: '', email: '', name: '', role: 'admin' });
   const [settingsData, setSettingsData] = useState({ pengumuman_aktif: 'true', waktu_pengumuman: '', pesan_sekolah: '' });
   
   // Custom Confirmation Modal states
-  const [confirmDialog, setConfirmDialog] = useState<{isOpen: boolean, type: 'single' | 'all', targetId?: string}>({ isOpen: false, type: 'single' });
+  const [confirmDialog, setConfirmDialog] = useState<{isOpen: boolean, type: 'single' | 'all', targetId?: string, targetType?: 'candidate' | 'user'}>({ isOpen: false, type: 'single' });
   const [confirmInput, setConfirmInput] = useState('');
 
   // UI states
   const [darkMode, setDarkMode] = useState(false);
+  const [activeTab, setActiveTab] = useState<'siswa' | 'admin'>('siswa');
   
   // Filter & Pagination states
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,10 +47,11 @@ export default function AdminDashboard() {
 
   const fetchData = async () => {
     try {
-      const [res, statsRes, settingsRes] = await Promise.all([
+      const [res, statsRes, settingsRes, usersRes] = await Promise.all([
         api.getCandidates(token!),
         api.getStats(),
-        api.getSettings()
+        api.getSettings(),
+        api.getUsers(token!)
       ]);
       
       if (res.data) {
@@ -57,6 +62,10 @@ export default function AdminDashboard() {
       
       if (statsRes.success) {
         setStats(statsRes.data);
+      }
+      
+      if (usersRes.success) {
+        setUsers(usersRes.data);
       }
       
       if (settingsRes.success && settingsRes.data) {
@@ -96,7 +105,7 @@ export default function AdminDashboard() {
   };
 
   const confirmDelete = (id: string) => {
-    setConfirmDialog({ isOpen: true, type: 'single', targetId: id });
+    setConfirmDialog({ isOpen: true, type: 'single', targetId: id, targetType: 'candidate' });
   };
 
   const confirmDeleteAll = () => {
@@ -106,12 +115,22 @@ export default function AdminDashboard() {
 
   const executeDelete = async () => {
     if (confirmDialog.type === 'single' && confirmDialog.targetId) {
-      try {
-        await api.deleteCandidate(token!, confirmDialog.targetId);
-        toast.success('Data berhasil dihapus');
-        fetchData();
-      } catch (err) {
-        toast.error('Gagal menghapus data');
+      if (confirmDialog.targetType === 'user') {
+        try {
+          await api.deleteUser(token!, confirmDialog.targetId);
+          toast.success('Admin berhasil dihapus');
+          fetchData();
+        } catch (err) {
+          toast.error('Gagal menghapus admin');
+        }
+      } else {
+        try {
+          await api.deleteCandidate(token!, confirmDialog.targetId);
+          toast.success('Data berhasil dihapus');
+          fetchData();
+        } catch (err) {
+          toast.error('Gagal menghapus data');
+        }
       }
     } else if (confirmDialog.type === 'all') {
       if (confirmInput !== 'HAPUS SEMUA') {
@@ -129,6 +148,32 @@ export default function AdminDashboard() {
       }
     }
     setConfirmDialog({ isOpen: false, type: 'single' });
+  };
+
+  const handleSaveUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (userFormData.id) {
+        await api.updateUser(token!, userFormData.id, userFormData);
+        toast.success('Data admin berhasil diubah!');
+      } else {
+        await api.createUser(token!, userFormData);
+        toast.success('Admin baru berhasil ditambahkan!');
+      }
+      setIsUserModalOpen(false);
+      fetchData();
+    } catch (err: any) {
+      toast.error('Gagal menyimpan data admin.');
+    }
+  };
+
+  const confirmDeleteUser = (id: string) => {
+    setConfirmDialog({ isOpen: true, type: 'single', targetId: id, targetType: 'user' });
+  };
+
+  const openUserModal = (data: any = { id: '', email: '', name: '', role: 'admin' }) => {
+    setUserFormData(data);
+    setIsUserModalOpen(true);
   };
 
   const handleSaveSettings = async (e: React.FormEvent) => {
@@ -339,7 +384,25 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        {/* Tabs */}
+        <div className="flex border-b border-slate-200 dark:border-slate-700 mb-6">
+          <button 
+            onClick={() => setActiveTab('siswa')}
+            className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${activeTab === 'siswa' ? 'border-indigo-600 text-indigo-600 dark:border-indigo-400 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
+          >
+            <i className="fas fa-user-graduate mr-2"></i> Data Siswa
+          </button>
+          <button 
+            onClick={() => setActiveTab('admin')}
+            className={`px-6 py-3 font-medium text-sm transition-colors border-b-2 ${activeTab === 'admin' ? 'border-indigo-600 text-indigo-600 dark:border-indigo-400 dark:text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
+          >
+            <i className="fas fa-users-cog mr-2"></i> Manajemen Admin
+          </button>
+        </div>
+
+        {activeTab === 'siswa' && (
+          <>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">Manajemen Data Siswa</h2>
             <p className="text-sm text-slate-500 dark:text-slate-400">Kelola data kelulusan siswa, tambah, edit, atau hapus data.</p>
@@ -469,6 +532,66 @@ export default function AdminDashboard() {
             </div>
           )}
         </div>
+        </>
+        )}
+
+        {activeTab === 'admin' && (
+          <>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">Manajemen Admin</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Kelola akun administrator untuk dashboard ini.</p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                <button onClick={() => openUserModal()} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl font-medium shadow-sm flex items-center gap-2 transition-colors">
+                  <i className="fas fa-user-plus"></i> Tambah Admin
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden mb-8">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
+                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Nama Lengkap</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Email</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Role</th>
+                      <th className="px-6 py-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                    {loading ? (
+                      <tr><td colSpan={4} className="text-center py-8 text-slate-500 dark:text-slate-400"><i className="fas fa-spinner fa-spin mr-2"></i> Memuat data...</td></tr>
+                    ) : users.length === 0 ? (
+                      <tr><td colSpan={4} className="text-center py-12 text-slate-500 dark:text-slate-400">Belum ada data admin.</td></tr>
+                    ) : (
+                      users.map(u => (
+                        <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                          <td className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white">{u.name}</td>
+                          <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">{u.email}</td>
+                          <td className="px-6 py-4">
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-800">
+                              {u.role.toUpperCase()}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-sm font-medium text-right space-x-3">
+                            <button onClick={() => openUserModal(u)} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300" title="Edit">
+                              <i className="fas fa-edit"></i>
+                            </button>
+                            <button onClick={() => confirmDeleteUser(u.id)} className="text-rose-600 hover:text-rose-900 dark:text-rose-400 dark:hover:text-rose-300" title="Hapus">
+                              <i className="fas fa-trash-alt"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )}
       </main>
 
       {/* Modal Form Tambah/Edit */}
@@ -535,6 +658,66 @@ export default function AdminDashboard() {
                     <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold transition-colors">Batal</button>
                     <button type="submit" className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl hover:from-indigo-700 hover:to-violet-700 font-semibold shadow-md shadow-indigo-500/20 transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
                       <i className="fas fa-save"></i> Simpan Data
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Form Tambah/Edit Admin */}
+      {isUserModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+            <div className="fixed inset-0 transition-opacity bg-slate-900/60 backdrop-blur-md" onClick={() => setIsUserModalOpen(false)}></div>
+            <div className="relative inline-block w-full max-w-md overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-slate-800 shadow-2xl rounded-3xl border border-slate-200 dark:border-slate-700 ring-1 ring-slate-900/5 dark:ring-white/10">
+              
+              <div className="bg-gradient-to-r from-indigo-50 to-white dark:from-slate-800 dark:to-slate-800 px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                    <i className={`fas ${userFormData.id ? 'fa-user-edit' : 'fa-user-plus'}`}></i>
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                    {userFormData.id ? 'Edit Admin' : 'Tambah Admin Baru'}
+                  </h3>
+                </div>
+                <button onClick={() => setIsUserModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
+
+              <div className="px-6 py-6">
+                <form onSubmit={handleSaveUser} className="space-y-5">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Nama Lengkap</label>
+                    <div className="relative">
+                      <i className="fas fa-font absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                      <input required type="text" value={userFormData.name} onChange={e => setUserFormData({...userFormData, name: e.target.value})} className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900 dark:text-white transition-all" placeholder="Nama admin..." />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Email (Login dengan Google)</label>
+                    <div className="relative">
+                      <i className="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                      <input required type="email" value={userFormData.email} onChange={e => setUserFormData({...userFormData, email: e.target.value})} className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900 dark:text-white transition-all" placeholder="email@gmail.com" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Role</label>
+                    <div className="relative">
+                      <select value={userFormData.role} onChange={e => setUserFormData({...userFormData, role: e.target.value})} className="w-full pl-4 pr-10 py-2.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900 dark:text-white transition-all appearance-none cursor-pointer">
+                        <option value="admin">Admin</option>
+                      </select>
+                      <i className="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 flex justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-700">
+                    <button type="button" onClick={() => setIsUserModalOpen(false)} className="px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold transition-colors">Batal</button>
+                    <button type="submit" className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl hover:from-indigo-700 hover:to-violet-700 font-semibold shadow-md shadow-indigo-500/20 transition-all flex items-center gap-2 transform hover:-translate-y-0.5">
+                      <i className="fas fa-save"></i> Simpan
                     </button>
                   </div>
                 </form>

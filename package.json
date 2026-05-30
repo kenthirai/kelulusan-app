@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "deploy": "npm run build && wrangler pages deploy dist",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name kelulusan-app",
     "db:init": "wrangler d1 migrations apply kelulusan-d1 --local"
   },
   "dependencies": {

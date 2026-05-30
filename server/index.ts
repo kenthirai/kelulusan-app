@@ -231,6 +231,71 @@ app.put('/api/admin/settings', adminAuth, async (c) => {
   }
 })
 
+// --- ADMIN MANAGEMENT API (Protected) ---
+
+app.get('/api/admin/users', adminAuth, async (c) => {
+  try {
+    const { results } = await c.env.DB.prepare('SELECT id, email, name, role, created_at FROM users ORDER BY created_at DESC').all()
+    return c.json({ success: true, data: results })
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
+  }
+})
+
+app.post('/api/admin/users', adminAuth, async (c) => {
+  try {
+    const body = await c.req.json()
+    const id = crypto.randomUUID()
+    const { email, name, role } = body
+    
+    const existing = await c.env.DB.prepare('SELECT id FROM users WHERE email = ?').bind(email).first()
+    if (existing) {
+      return c.json({ error: 'Email sudah terdaftar' }, 400)
+    }
+
+    await c.env.DB.prepare(`
+      INSERT INTO users (id, email, name, role) 
+      VALUES (?, ?, ?, ?)
+    `).bind(id, email, name, role || 'admin').run()
+      
+    return c.json({ success: true, id })
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
+  }
+})
+
+app.put('/api/admin/users/:id', adminAuth, async (c) => {
+  try {
+    const id = c.req.param('id')
+    const body = await c.req.json()
+    const { email, name, role } = body
+    
+    const existing = await c.env.DB.prepare('SELECT id FROM users WHERE email = ? AND id != ?').bind(email, id).first()
+    if (existing) {
+      return c.json({ error: 'Email sudah terdaftar pada pengguna lain' }, 400)
+    }
+
+    await c.env.DB.prepare('UPDATE users SET email = ?, name = ?, role = ? WHERE id = ?')
+      .bind(email, name, role, id)
+      .run()
+      
+    return c.json({ success: true })
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
+  }
+})
+
+app.delete('/api/admin/users/:id', adminAuth, async (c) => {
+  try {
+    const id = c.req.param('id')
+    // Jangan izinkan hapus diri sendiri? (Optional)
+    await c.env.DB.prepare('DELETE FROM users WHERE id = ?').bind(id).run()
+    return c.json({ success: true })
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
+  }
+})
+
 // --- GOOGLE OAUTH ---
 
 app.post('/api/auth/google', async (c) => {
@@ -263,18 +328,23 @@ app.post('/api/auth/google', async (c) => {
 
     // Authorization: Check if email is in allowed ADMIN_EMAILS list
     const allowedEmails = (c.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
-    if (!allowedEmails.includes(payload.email.toLowerCase())) {
-      return c.json({ error: 'Email Anda tidak memiliki akses Administrator.' }, 403)
-    }
+    const isSuperAdmin = allowedEmails.includes(payload.email.toLowerCase())
 
     let user = await c.env.DB.prepare('SELECT * FROM users WHERE email = ?').bind(payload.email).first()
     
     if (!user) {
+      if (!isSuperAdmin) {
+        return c.json({ error: 'Email Anda tidak terdaftar sebagai Administrator.' }, 403)
+      }
       const id = crypto.randomUUID()
       await c.env.DB.prepare('INSERT INTO users (id, email, name, role) VALUES (?, ?, ?, ?)')
         .bind(id, payload.email, payload.name, 'admin')
         .run()
       user = { id, email: payload.email, name: payload.name, role: 'admin' }
+    } else {
+      if (user.role !== 'admin' && !isSuperAdmin) {
+        return c.json({ error: 'Akun Anda tidak memiliki hak akses Administrator.' }, 403)
+      }
     }
 
     const token = await sign(
