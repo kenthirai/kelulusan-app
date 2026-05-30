@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && npm run build:worker",
-    "build:worker": "esbuild server/index.ts --bundle --outfile=dist/_worker.js --format=esm --platform=neutral",
+    "build": "tsc -b && vite build",
     "deploy": "npm run build && wrangler pages deploy dist",
     "db:init": "wrangler d1 migrations apply kelulusan-d1 --local"
   },
