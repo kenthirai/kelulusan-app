@@ -17,7 +17,7 @@ export default function TermsOfService() {
           
           <h2 className="text-xl font-semibold text-slate-900 dark:text-white mt-8 mb-4">1. Penerimaan Syarat</h2>
           <p>
-            Dengan mengakses dan menggunakan Sistem Informasi Kelulusan ("Layanan"), Anda setuju untuk terikat oleh Syarat dan Ketentuan ini. Jika Anda tidak setuju dengan bagian mana pun dari syarat ini, Anda tidak diperkenankan untuk mengakses Layanan.
+            Dengan mengakses dan menggunakan <strong>Kelulusan App</strong> ("Layanan"), Anda setuju untuk terikat oleh Syarat dan Ketentuan ini. Jika Anda tidak setuju dengan bagian mana pun dari syarat ini, Anda tidak diperkenankan untuk mengakses Layanan.
           </p>
 
           <h2 className="text-xl font-semibold text-slate-900 dark:text-white mt-8 mb-4">2. Penggunaan Layanan</h2>

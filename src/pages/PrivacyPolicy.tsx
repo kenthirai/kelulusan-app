@@ -17,7 +17,7 @@ export default function PrivacyPolicy() {
           
           <h2 className="text-xl font-semibold text-slate-900 dark:text-white mt-8 mb-4">1. Informasi yang Kami Kumpulkan</h2>
           <p>
-            Sistem Informasi Kelulusan mengumpulkan informasi berikut:
+            Layanan <strong>Kelulusan App</strong> mengumpulkan informasi berikut:
           </p>
           <ul className="list-disc pl-5 mt-2 space-y-1">
             <li><strong>Data Siswa (Publik):</strong> Nomor Ujian, Nama Siswa, Kategori, Status Kelulusan, dan Nilai yang diinput oleh Administrator sekolah.</li>
