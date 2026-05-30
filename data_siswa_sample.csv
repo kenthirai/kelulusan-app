@@ -1,0 +1,101 @@
+nomor_ujian,nama,kategori,status.nilai
+10001,Andi Saputra,IPA,LULUS,88.5
+10002,Budi Santoso,IPS,LULUS,91.0
+10003,Citra Lestari,Bahasa,TIDAK LULUS,65.0
+10004,Dewi Maharani,IPA,LULUS,95.5
+10005,Eko Prasetyo,IPS,LULUS,82.0
+10006,Fina Amelia,Bahasa,LULUS,89.0
+10007,Gilang Ramadhan,IPA,TIDAK LULUS,55.5
+10008,Hani Safitri,IPS,LULUS,87.5
+10009,Irfan Hakim,IPA,LULUS,92.0
+10010,Joko Susilo,Bahasa,LULUS,80.0
+10011,Kiki Wijaya,IPA,LULUS,78.5
+10012,Lina Nugroho,IPS,LULUS,84.0
+10013,Made Wibowo,Bahasa,TIDAK LULUS,68.5
+10014,Nia Permatasari,IPA,LULUS,90.0
+10015,Oka Setiawan,IPS,LULUS,86.5
+10016,Putri Handayani,Bahasa,LULUS,81.0
+10017,Qori Azizah,IPA,TIDAK LULUS,59.0
+10018,Rina Sari,IPS,LULUS,93.5
+10019,Sari Indah,Bahasa,LULUS,79.0
+10020,Tono Prasetyo,IPA,LULUS,88.0
+10021,Umi Hasanah,IPS,LULUS,85.5
+10022,Vina Lestari,Bahasa,TIDAK LULUS,64.0
+10023,Wahyu Saputra,IPA,LULUS,96.0
+10024,Xena Zain,IPS,LULUS,83.5
+10025,Yusuf Maulana,Bahasa,LULUS,90.5
+10026,Zaki Firmansyah,IPA,TIDAK LULUS,49.0
+10027,Agung Susanto,IPS,LULUS,92.5
+10028,Bella Rahma,Bahasa,LULUS,77.0
+10029,Cahyo Utomo,IPA,LULUS,89.5
+10030,Dina Anggraini,IPS,LULUS,86.0
+10031,Eka Putra,Bahasa,TIDAK LULUS,66.5
+10032,Fajar Nurhidayat,IPA,LULUS,94.0
+10033,Gita Puspita,IPS,LULUS,80.5
+10034,Hendra Setiawan,Bahasa,LULUS,75.0
+10035,Intan Permata,IPA,TIDAK LULUS,58.0
+10036,Jefri Tambunan,IPS,LULUS,91.5
+10037,Karina Melati,Bahasa,LULUS,82.5
+10038,Lucky Hidayat,IPA,LULUS,87.0
+10039,Mega Mustika,IPS,LULUS,84.5
+10040,Nanda Ramadhan,Bahasa,TIDAK LULUS,62.0
+10041,Oki Suryadi,IPA,LULUS,97.0
+10042,Pia Marlina,IPS,LULUS,85.0
+10043,Qilla Sabrina,Bahasa,LULUS,78.0
+10044,Rendy Kurniawan,IPA,TIDAK LULUS,53.5
+10045,Sinta Dewi,IPS,LULUS,90.0
+10046,Tasya Amelia,Bahasa,LULUS,76.5
+10047,Ujang Hermawan,IPA,LULUS,93.0
+10048,Vera Susanti,IPS,LULUS,88.0
+10049,Winda Larasati,Bahasa,TIDAK LULUS,67.0
+10050,Xavier Leonardo,IPA,LULUS,95.0
+10051,Yuni Shara,IPS,LULUS,81.5
+10052,Zahra Aulia,Bahasa,LULUS,74.0
+10053,Adi Nugroho,IPA,TIDAK LULUS,56.5
+10054,Bunga Citra,IPS,LULUS,89.0
+10055,Chandra Wijaya,Bahasa,LULUS,83.0
+10056,Dodi Saputra,IPA,LULUS,92.0
+10057,Endah Lestari,IPS,LULUS,87.5
+10058,Fahmi Hakim,Bahasa,TIDAK LULUS,61.0
+10059,Gina Rahmawati,IPA,LULUS,98.0
+10060,Hadi Santoso,IPS,LULUS,84.0
+10061,Indah Permatasari,Bahasa,LULUS,79.5
+10062,Jaka Tarub,IPA,TIDAK LULUS,50.5
+10063,Kanya Dewi,IPS,LULUS,94.5
+10064,Lukman Harun,Bahasa,LULUS,76.0
+10065,Mila Sari,IPA,LULUS,91.0
+10066,Nando Setiawan,IPS,LULUS,86.5
+10067,Olivia Zain,Bahasa,TIDAK LULUS,63.0
+10068,Panca Widodo,IPA,LULUS,89.5
+10069,Qonita Zahra,IPS,LULUS,82.0
+10070,Riko Pratama,Bahasa,LULUS,77.5
+10071,Siska Anggraini,IPA,TIDAK LULUS,52.0
+10072,Teguh Santoso,IPS,LULUS,96.5
+10073,Ulfah Azizah,Bahasa,LULUS,80.0
+10074,Vito Susilo,IPA,LULUS,88.5
+10075,Wulan Sari,IPS,LULUS,85.0
+10076,Xena Putri,Bahasa,TIDAK LULUS,68.0
+10077,Yoga Saputra,IPA,LULUS,93.5
+10078,Zara Marwah,IPS,LULUS,90.5
+10079,Alvin Maulana,Bahasa,LULUS,74.5
+10080,Bayu Pamungkas,IPA,TIDAK LULUS,57.0
+10081,Cindy Aulia,IPS,LULUS,92.0
+10082,Dimas Prasetyo,Bahasa,LULUS,81.0
+10083,Ella Safitri,IPA,LULUS,86.0
+10084,Fikri Ramadhan,IPS,LULUS,83.5
+10085,Galuh Ayu,Bahasa,TIDAK LULUS,60.5
+10086,Hafiz Nur,IPA,LULUS,95.5
+10087,Ika Kartika,IPS,LULUS,88.0
+10088,Jihan Fadhila,Bahasa,LULUS,75.5
+10089,Kevin Hermawan,IPA,TIDAK LULUS,54.0
+10090,Laras Atmaja,IPS,LULUS,97.0
+10091,Mutia Rahma,Bahasa,LULUS,78.5
+10092,Nova Aryanto,IPA,LULUS,91.5
+10093,Omar Syarif,IPS,LULUS,84.5
+10094,Priska Wulandari,Bahasa,TIDAK LULUS,66.0
+10095,Radit Firmansyah,IPA,LULUS,94.0
+10096,Salsa Bintang,IPS,LULUS,87.0
+10097,Taufik Hidayat,Bahasa,LULUS,82.0
+10098,Ursula Manurung,IPA,TIDAK LULUS,51.5
+10099,Viona Salsabila,IPS,LULUS,89.0
+10100,Wisnu Wardhana,Bahasa,LULUS,73.5

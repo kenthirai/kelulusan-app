@@ -5,4 +5,4 @@ compatibility_date = "2024-02-22"
 [[d1_databases]]
 binding = "DB"
 database_name = "kelulusan-d1"
-database_id = "local-dev" # Local dev doesn't care, will be updated later for remote
+database_id = "b214a76b-ab46-4fd0-b400-7f17d512b0d6"

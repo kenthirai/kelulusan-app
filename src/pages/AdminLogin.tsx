@@ -1,26 +1,35 @@
-import { GoogleLogin } from '@react-oauth/google'
+import { useGoogleLogin } from '@react-oauth/google'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../lib/api'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
   const [error, setError] = useState('')
 
-  const handleSuccess = async (credentialResponse: any) => {
-    try {
-      if (!credentialResponse.credential) return
-      const res = await api.googleAuth(credentialResponse.credential)
-      if (res.error) {
-        setError(res.error)
-        return
-      }
-      localStorage.setItem('admin_token', res.token)
+  useEffect(() => {
+    if (localStorage.getItem('admin_token')) {
       navigate('/admin/dashboard')
-    } catch (err: any) {
-      setError(err.message)
     }
-  }
+  }, [navigate])
+
+  const login = useGoogleLogin({
+    prompt: 'select_account',
+    onSuccess: async (tokenResponse) => {
+      try {
+        const res = await api.googleAuth(tokenResponse.access_token, 'access_token')
+        if (res.error) {
+          setError(res.error)
+          return
+        }
+        localStorage.setItem('admin_token', res.token)
+        navigate('/admin/dashboard')
+      } catch (err: any) {
+        setError(err.message)
+      }
+    },
+    onError: () => setError('Autentikasi gagal, silakan coba lagi.')
+  })
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors duration-300 p-4">
@@ -43,12 +52,13 @@ export default function AdminLogin() {
           )}
           
           <div className="flex justify-center">
-            <GoogleLogin
-              onSuccess={handleSuccess}
-              onError={() => {
-                setError('Autentikasi gagal, silakan coba lagi.')
-              }}
-            />
+            <button 
+              onClick={() => login()}
+              className="flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 dark:border-slate-600 rounded-xl hover:bg-slate-50 dark:bg-slate-700 dark:hover:bg-slate-600 transition-colors shadow-sm font-medium text-slate-700 dark:text-slate-200"
+            >
+              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+              Sign in with Google
+            </button>
           </div>
           
           <div className="mt-8 text-sm text-slate-400 dark:text-slate-500">

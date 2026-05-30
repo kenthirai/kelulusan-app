@@ -17,7 +17,7 @@ export default function SearchResult({ result, onReset }: { result: any, onReset
             <i className={`fas ${isLulus ? 'fa-check-double' : 'fa-times'} text-3xl`}></i>
           </div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Hasil Pengumuman</h2>
-          <p className="text-slate-600 dark:text-slate-300">Tahun Ajaran 2023/2024</p>
+          <p className="text-slate-600 dark:text-slate-300">Tahun Ajaran 2025/2026</p>
         </div>
 
         {/* Content */}
@@ -59,8 +59,8 @@ export default function SearchResult({ result, onReset }: { result: any, onReset
       {isLulus && (
         <div id="cetak-skl-area" className="hidden print:block absolute top-0 left-0 w-full bg-white p-8">
           <div className="text-center border-b-2 border-black pb-4 mb-8">
-            <h1 className="text-2xl font-bold uppercase">Surat Keterangan Lulus</h1>
-            <p>SMK & SMA Unggul Tahun Ajaran 2023/2024</p>
+            <h1 className="text-2xl font-bold uppercase tracking-wider">Surat Keterangan Lulus</h1>
+            <p>SMA Kabupaten Gresik Tahun Ajaran 2025/2026</p>
           </div>
           <p className="mb-4">Yang bertanda tangan di bawah ini Kepala Sekolah menerangkan bahwa:</p>
           <table className="w-full mb-8">
@@ -76,7 +76,7 @@ export default function SearchResult({ result, onReset }: { result: any, onReset
           </div>
           <div className="flex justify-end text-center">
             <div>
-              <p>Jakarta, 30 Mei 2024</p>
+              <p>Gresik, 31 Mei 2026</p>
               <p className="mb-20">Kepala Sekolah,</p>
               <p className="font-bold underline">Dr. Budi Santoso, M.Pd</p>
               <p>NIP. 19800101 200501 1 001</p>

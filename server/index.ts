@@ -87,27 +87,14 @@ app.get('/api/stats', async (c) => {
   }
 })
 
-app.get('/api/mading', async (c) => {
+app.get('/api/settings', async (c) => {
   try {
-    const { results } = await c.env.DB.prepare('SELECT * FROM mading ORDER BY created_at DESC LIMIT 50').all()
-    return c.json({ success: true, data: results })
-  } catch (err: any) {
-    return c.json({ error: err.message }, 500)
-  }
-})
-
-app.post('/api/mading', async (c) => {
-  try {
-    const body = await c.req.json()
-    const { nama, jurusan, pesan } = body
-    if (!nama || !pesan) return c.json({ error: 'Nama dan pesan wajib diisi' }, 400)
-    
-    const id = crypto.randomUUID()
-    await c.env.DB.prepare('INSERT INTO mading (id, nama, jurusan, pesan) VALUES (?, ?, ?, ?)')
-      .bind(id, nama, jurusan || '-', pesan)
-      .run()
-      
-    return c.json({ success: true, id })
+    const { results } = await c.env.DB.prepare('SELECT id, value FROM settings').all()
+    const settings = results.reduce((acc: any, row: any) => {
+      acc[row.id] = row.value
+      return acc
+    }, {})
+    return c.json({ success: true, data: settings })
   } catch (err: any) {
     return c.json({ error: err.message }, 500)
   }
@@ -130,11 +117,54 @@ app.post('/api/admin/candidates', adminAuth, async (c) => {
     const id = crypto.randomUUID()
     const { nomor_ujian, nama, kategori, status, nilai } = body
     
-    await c.env.DB.prepare('INSERT INTO candidates (id, nomor_ujian, nama, kategori, status, nilai) VALUES (?, ?, ?, ?, ?, ?)')
-      .bind(id, nomor_ujian, nama, kategori, status, nilai || '')
-      .run()
+    await c.env.DB.prepare(`
+      INSERT INTO candidates (id, nomor_ujian, nama, kategori, status, nilai) 
+      VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT(nomor_ujian) DO UPDATE SET 
+        nama=excluded.nama, 
+        kategori=excluded.kategori, 
+        status=excluded.status, 
+        nilai=excluded.nilai, 
+        updated_at=CURRENT_TIMESTAMP
+    `).bind(id, nomor_ujian, nama, kategori, status, nilai || '').run()
       
     return c.json({ success: true, id })
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
+  }
+})
+
+app.post('/api/admin/candidates/batch', adminAuth, async (c) => {
+  try {
+    const body = await c.req.json()
+    const candidates = body.candidates
+    if (!Array.isArray(candidates) || candidates.length === 0) {
+      return c.json({ error: 'Data tidak valid' }, 400)
+    }
+
+    const stmts = candidates.map(cand => {
+      const id = crypto.randomUUID()
+      return c.env.DB.prepare(`
+        INSERT INTO candidates (id, nomor_ujian, nama, kategori, status, nilai) 
+        VALUES (?, ?, ?, ?, ?, ?)
+        ON CONFLICT(nomor_ujian) DO UPDATE SET 
+          nama=excluded.nama, 
+          kategori=excluded.kategori, 
+          status=excluded.status, 
+          nilai=excluded.nilai, 
+          updated_at=CURRENT_TIMESTAMP
+      `).bind(id, cand.nomor_ujian, cand.nama, cand.kategori || '-', cand.status || 'LULUS', cand.nilai || '')
+    })
+
+    // Cloudflare D1 batching supports up to 100 statements at a time
+    // For simplicity, we chunk them if needed. But usually batch() is good.
+    const chunkSize = 100
+    for (let i = 0; i < stmts.length; i += chunkSize) {
+      const chunk = stmts.slice(i, i + chunkSize)
+      await c.env.DB.batch(chunk)
+    }
+
+    return c.json({ success: true, count: candidates.length })
   } catch (error: any) {
     return c.json({ error: error.message }, 500)
   }
@@ -166,18 +196,57 @@ app.delete('/api/admin/candidates/:id', adminAuth, async (c) => {
   }
 })
 
+app.delete('/api/admin/candidates', adminAuth, async (c) => {
+  try {
+    await c.env.DB.prepare('DELETE FROM candidates').run()
+    return c.json({ success: true })
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
+  }
+})
+
+app.put('/api/admin/settings', adminAuth, async (c) => {
+  try {
+    const body = await c.req.json()
+    const stmts = Object.entries(body).map(([key, value]) => {
+      return c.env.DB.prepare('UPDATE settings SET value = ? WHERE id = ?').bind(String(value), key)
+    })
+    
+    if (stmts.length > 0) {
+      await c.env.DB.batch(stmts)
+    }
+    
+    return c.json({ success: true })
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
+  }
+})
+
 // --- GOOGLE OAUTH ---
 
 app.post('/api/auth/google', async (c) => {
   try {
-    const { credential } = await c.req.json()
+    const { credential, type } = await c.req.json()
     
-    // Verify credential with Google
-    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`)
-    if (!response.ok) {
-      return c.json({ error: 'Invalid Google token' }, 401)
+    let payload: any;
+    
+    if (type === 'access_token') {
+      // Verify access token
+      const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo`, {
+        headers: { Authorization: `Bearer ${credential}` }
+      })
+      if (!response.ok) {
+        return c.json({ error: 'Invalid Google access token' }, 401)
+      }
+      payload = await response.json()
+    } else {
+      // Verify id_token
+      const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`)
+      if (!response.ok) {
+        return c.json({ error: 'Invalid Google id_token' }, 401)
+      }
+      payload = await response.json()
     }
-    const payload = await response.json() as any
     
     if (!payload.email) {
       return c.json({ error: 'Email not found in token' }, 400)

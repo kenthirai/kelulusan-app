@@ -17,12 +17,12 @@ export default function Statistics() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Statistik Kelulusan</h2>
-          <div className="w-24 h-1 bg-indigo-500 mx-auto rounded-full"></div>
+          <div className="w-24 h-1 bg-black dark:bg-white mx-auto rounded-full"></div>
         </div>
         
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 rounded-xl flex items-center justify-center mx-auto mb-4 text-xl">
+            <div className="w-12 h-12 bg-slate-200 text-black dark:bg-slate-700 dark:text-white rounded-xl flex items-center justify-center mx-auto mb-4 text-xl">
               <i className="fas fa-users"></i>
             </div>
             <div className="text-3xl font-black text-slate-900 dark:text-white mb-1" id="stat-total">{stats.total}</div>
@@ -30,7 +30,7 @@ export default function Statistics() {
           </div>
           
           <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400 rounded-xl flex items-center justify-center mx-auto mb-4 text-xl">
+            <div className="w-12 h-12 bg-slate-200 text-black dark:bg-slate-700 dark:text-white rounded-xl flex items-center justify-center mx-auto mb-4 text-xl">
               <i className="fas fa-user-graduate"></i>
             </div>
             <div className="text-3xl font-black text-slate-900 dark:text-white mb-1" id="stat-lulus">{stats.lulus}</div>
@@ -38,7 +38,7 @@ export default function Statistics() {
           </div>
           
           <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 rounded-xl flex items-center justify-center mx-auto mb-4 text-xl">
+            <div className="w-12 h-12 bg-slate-200 text-black dark:bg-slate-700 dark:text-white rounded-xl flex items-center justify-center mx-auto mb-4 text-xl">
               <i className="fas fa-percentage"></i>
             </div>
             <div className="text-3xl font-black text-slate-900 dark:text-white mb-1" id="stat-persen">{stats.persentase}%</div>
@@ -46,7 +46,7 @@ export default function Statistics() {
           </div>
           
           <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 rounded-xl flex items-center justify-center mx-auto mb-4 text-xl">
+            <div className="w-12 h-12 bg-slate-200 text-black dark:bg-slate-700 dark:text-white rounded-xl flex items-center justify-center mx-auto mb-4 text-xl">
               <i className="fas fa-medal"></i>
             </div>
             <div className="text-3xl font-black text-slate-900 dark:text-white mb-1" id="stat-cumlaude">{stats.cumlaude}</div>

@@ -1,10 +1,10 @@
 export default function Gallery() {
   const images = [
-    { src: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&auto=format&fit=crop&q=80', title: 'Masa Orientasi', span: 'col-span-12 sm:col-span-6 md:col-span-8', height: 'h-64 md:h-80' },
-    { src: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?w=800&auto=format&fit=crop&q=80', title: 'Praktek Lapangan', span: 'col-span-12 sm:col-span-6 md:col-span-4', height: 'h-64 md:h-80' },
-    { src: 'https://images.unsplash.com/photo-1529390079861-591de354faf5?w=800&auto=format&fit=crop&q=80', title: 'Pensi Sekolah', span: 'col-span-12 sm:col-span-4 md:col-span-4', height: 'h-64' },
-    { src: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop&q=80', title: 'Belajar Bersama', span: 'col-span-12 sm:col-span-8 md:col-span-4', height: 'h-64' },
-    { src: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?w=800&auto=format&fit=crop&q=80', title: 'Ujian Akhir', span: 'col-span-12 sm:col-span-12 md:col-span-4', height: 'h-64' },
+    { src: '/images/gallery-1.png', title: 'Masa Orientasi', span: 'col-span-12 sm:col-span-6 md:col-span-8', height: 'h-64 md:h-80' },
+    { src: '/images/gallery-2.png', title: 'Praktek Lapangan', span: 'col-span-12 sm:col-span-6 md:col-span-4', height: 'h-64 md:h-80' },
+    { src: '/images/gallery-3.png', title: 'Pensi Sekolah', span: 'col-span-12 sm:col-span-4 md:col-span-4', height: 'h-64' },
+    { src: '/images/gallery-4.png', title: 'Belajar Bersama', span: 'col-span-12 sm:col-span-8 md:col-span-4', height: 'h-64' },
+    { src: '/images/gallery-5.png', title: 'Ujian Akhir', span: 'col-span-12 sm:col-span-12 md:col-span-4', height: 'h-64' },
   ];
 
   return (

@@ -11,25 +11,28 @@ export const api = {
     return res.json()
   },
 
-  getMading: async (): Promise<any> => {
-    const res = await fetch(`${API_BASE}/mading`)
+  getSettings: async (): Promise<any> => {
+    const res = await fetch(`${API_BASE}/settings`)
     return res.json()
   },
 
-  postMading: async (data: any): Promise<any> => {
-    const res = await fetch(`${API_BASE}/mading`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+  updateSettings: async (token: string, data: any): Promise<any> => {
+    const res = await fetch(`${API_BASE}/admin/settings`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}` 
+      },
       body: JSON.stringify(data)
     })
     return res.json()
   },
 
-  googleAuth: async (credential: string): Promise<any> => {
+  googleAuth: async (credential: string, type: 'id_token' | 'access_token' = 'id_token'): Promise<any> => {
     const res = await fetch(`${API_BASE}/auth/google`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ credential }),
+      body: JSON.stringify({ credential, type }),
     })
     return res.json()
   },
@@ -74,6 +77,28 @@ export const api = {
       headers: { Authorization: `Bearer ${token}` }
     })
     if (!res.ok) throw new Error('Gagal menghapus data')
+    return res.json()
+  },
+
+  importCandidatesBatch: async (token: string, candidates: any[]): Promise<any> => {
+    const res = await fetch(`${API_BASE}/admin/candidates/batch`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}` 
+      },
+      body: JSON.stringify({ candidates })
+    })
+    if (!res.ok) throw new Error('Gagal mengimpor data')
+    return res.json()
+  },
+
+  deleteAllCandidates: async (token: string): Promise<any> => {
+    const res = await fetch(`${API_BASE}/admin/candidates`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    if (!res.ok) throw new Error('Gagal menghapus semua data')
     return res.json()
   }
 }
