@@ -28,6 +28,15 @@ app.use('*', cors({
   allowHeaders: ['Content-Type', 'Authorization'],
 }))
 
+app.get('/api/debug', async (c) => {
+  try {
+    const { results } = await c.env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table'").all()
+    return c.json({ tables: results })
+  } catch (error: any) {
+    return c.json({ error: error.message }, 500)
+  }
+})
+
 // Auth Middleware for Admin
 const adminAuth = async (c: any, next: any) => {
   const authHeader = c.req.header('Authorization')
