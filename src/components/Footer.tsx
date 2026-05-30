@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function Footer() {
   return (
     <footer className="bg-slate-900 text-white py-12 mt-auto border-t border-slate-800">
@@ -21,6 +23,8 @@ export default function Footer() {
               <li><a href="#statistik" className="hover:text-indigo-400 transition-colors">Statistik</a></li>
               <li><a href="#galeri" className="hover:text-indigo-400 transition-colors">Galeri Angkatan</a></li>
               <li><a href="#mading" className="hover:text-indigo-400 transition-colors">Mading Digital</a></li>
+              <li><Link to="/privacy-policy" className="hover:text-indigo-400 transition-colors">Kebijakan Privasi</Link></li>
+              <li><Link to="/terms-of-service" className="hover:text-indigo-400 transition-colors">Syarat Ketentuan</Link></li>
             </ul>
           </div>
           <div>
