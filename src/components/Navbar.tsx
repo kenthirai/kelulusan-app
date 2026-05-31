@@ -48,7 +48,7 @@ export default function Navbar() {
             </button>
             <Link 
               to="/admin/dashboard" 
-              className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 font-medium text-sm transition-colors shadow-md"
+              className="flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 font-medium text-xs sm:text-sm transition-colors shadow-md"
             >
               <i className="fas fa-lock text-xs"></i>
               {localStorage.getItem('admin_token') ? 'Dasbor' : 'Admin'}
